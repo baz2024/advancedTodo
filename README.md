@@ -1,5 +1,5 @@
 
-# Advanced React + Material UI Tutorial
+# Advanced React + Material UI Tutorial (Vite Edition)
 **Author**: Dr. Basel Magableh  
 **Date**: April 2025
 
@@ -7,7 +7,7 @@
 
 ## Overview
 
-This tutorial demonstrates how to build an advanced React application using Material UI components. It includes:
+This tutorial demonstrates how to build an advanced React application using Material UI components with **Vite** instead of Create React App. It includes:
 
 - Login and logout functionality  
 - A top navigation bar and a sidebar drawer  
@@ -20,12 +20,25 @@ This tutorial demonstrates how to build an advanced React application using Mate
 
 ## Project Setup
 
+### 1. Create Vite + React App
+
 ```bash
-npm create vite@latest advanced_todo --template react
-cd advanced_todo
+npm create vite@latest advanced-todo -- --template react
+cd advanced-todo
+```
+
+### 2. Install Dependencies
+
+```bash
 npm install
 npm install @mui/material @mui/icons-material @emotion/react @emotion/styled @mui/x-data-grid react-router-dom
 ```
+
+### 3. Fix React Router DOM v6 Vite Error
+
+> **Issue**: If you get an error like `Uncaught TypeError: Cannot read properties of undefined (reading 'basename')`, it may be because `react-router-dom` is not properly wrapped inside `<BrowserRouter>` in Vite.
+
+> **Solution**: Make sure you wrap your app in `<BrowserRouter>` in `main.jsx`.
 
 ---
 
@@ -34,19 +47,62 @@ npm install @mui/material @mui/icons-material @emotion/react @emotion/styled @mu
 ```text
 src/
 |- components/
-|  |- Navbar.js
-|  |- Sidebar.js
-|  |- BreadcrumbsNav.js
+|  |- Navbar.jsx
+|  |- Sidebar.jsx
+|  |- BreadcrumbsNav.jsx
 |- pages/
-|  |- Login.js
-|  |- Dashboard.js
-|- App.js
-|- index.js
+|  |- Login.jsx
+|  |- Dashboard.jsx
+|- App.jsx
+|- main.jsx
 ```
 
 ---
 
-## Login Page (`pages/Login.js`)
+## main.jsx
+
+```javascript
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import { BrowserRouter } from 'react-router-dom';
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
+);
+```
+
+---
+
+## App.jsx
+
+```javascript
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+
+const App = () => {
+  const isLoggedIn = !!localStorage.getItem('user');
+
+  return (
+    <Routes>
+      <Route path="/" element={isLoggedIn ? <Navigate to="/dashboard" /> : <Login />} />
+      <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/" />} />
+    </Routes>
+  );
+};
+
+export default App;
+```
+
+---
+
+## Login Page (`pages/Login.jsx`)
 
 ```javascript
 import React, { useState } from 'react';
@@ -78,7 +134,7 @@ export default Login;
 
 ---
 
-## Navbar (`components/Navbar.js`)
+## Navbar (`components/Navbar.jsx`)
 
 ```javascript
 import React from 'react';
@@ -107,7 +163,7 @@ export default Navbar;
 
 ---
 
-## Sidebar Drawer (`components/Sidebar.js`)
+## Sidebar (`components/Sidebar.jsx`)
 
 ```javascript
 import React from 'react';
@@ -136,7 +192,7 @@ export default Sidebar;
 
 ---
 
-## Breadcrumbs (`components/BreadcrumbsNav.js`)
+## BreadcrumbsNav (`components/BreadcrumbsNav.jsx`)
 
 ```javascript
 import { Breadcrumbs, Link, Typography } from '@mui/material';
@@ -154,7 +210,7 @@ export default BreadcrumbsNav;
 
 ---
 
-## Dashboard Page (`pages/Dashboard.js`)
+## Dashboard Page (`pages/Dashboard.jsx`)
 
 ```javascript
 import React, { useState } from 'react';
@@ -198,40 +254,5 @@ export default Dashboard;
 ```
 
 ---
+ 
 
-## Routing Setup (`App.js`)
-
-```javascript
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-
-const App = () => {
-  const isLoggedIn = !!localStorage.getItem('user');
-
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={isLoggedIn ? <Navigate to="/dashboard" /> : <Login />} />
-        <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/" />} />
-      </Routes>
-    </Router>
-  );
-};
-
-export default App;
-```
-
----
-
-## Conclusion
-
-This advanced React + MUI app demonstrates:
-
-- Basic authentication
-- Responsive navigation components (Navbar + Drawer)
-- Layout structure using Cards
-- Displaying dynamic data with DataGrid
-
-It serves as a strong base for building production-quality applications.
